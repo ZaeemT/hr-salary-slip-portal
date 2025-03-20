@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Exo 2';
+    src: url('Exo2-Bold.woff2') format('woff2'),
+        url('Exo2-Bold.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+

@@ -1,0 +1,18 @@
+/* Inter Variable Font */
+@import url('/fonts/Inter/inter.css');
+
+/* Montserrat Font */
+@import url('/fonts/Montserrat/stylesheet.css');
+
+/* Exo 2 Font */
+@import url('/fonts/Exo2/stylesheet.css');
+
+/* Font usage examples:
+For Inter:
+font-family: "Inter", sans-serif;
+-- or with variable fonts --
+font-family: "InterVariable", sans-serif;
+
+For Montserrat:
+font-family: "Montserrat", sans-serif;
+*/
