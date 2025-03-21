@@ -1,8 +1,8 @@
 import { BackgroundBeams } from "@/components/backgrounds/background-beams"
-import { LoginForm } from "@/components/login-form"
+import { LoginForm } from "@/components/LoginForm"
 
 
-export default function Auth() {
+export default function Login() {
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">

@@ -1,11 +1,11 @@
 import { RouteObject } from 'react-router-dom';
-import Auth from '@/pages/Auth';
 import SignUp from '@/pages/SignUp';
+import Login from '@/pages/Login';
 
 export const authRoutes: RouteObject[] = [
   {
     path: '/',
-    element: <Auth />,
+    element: <Login />,
   },
   {
     path: '/register',
