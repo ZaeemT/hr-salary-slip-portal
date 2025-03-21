@@ -1,10 +1,9 @@
 import { useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle2, Download, FileText, MoreHorizontal, Upload } from "lucide-react"
+import { CheckCircle2, Download, MoreHorizontal, Upload } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Link } from "react-router-dom"
 
@@ -108,7 +107,7 @@ export function Listing() {
                             <FileText className="h-4 w-4" />
                             <span>Export</span>
                         </Button> */}
-                        <Link to="/">
+                        <Link to="/upload">
                             <Button className="gap-2">
                                 <Upload className="h-4 w-4" />
                                 <span>New Upload</span>

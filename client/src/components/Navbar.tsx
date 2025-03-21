@@ -23,17 +23,14 @@ const Navbar = () => {
 
                     {/* Desktop Menu */}
                     <div className="hidden md:flex space-x-8 font-inter">
-                        <Link to="/" className='hover:text-gray-400'>
+                        <Link to="/home" className='hover:text-gray-400'>
                             Home
                         </Link>
-                        <Link to="/about" className='hover:text-gray-400'>
-                            About
+                        <Link to="/upload" className='hover:text-gray-400'>
+                            Upload
                         </Link>
-                        <Link to="/services" className='hover:text-gray-400'>
-                            Services
-                        </Link>
-                        <Link to="/contact" className='hover:text-gray-400'>
-                            Contact
+                        <Link to="/profile" className='hover:text-gray-400'>
+                            Profile
                         </Link>
                     </div>
 
@@ -67,28 +64,22 @@ const Navbar = () => {
                     <div className="md:hidden">
                         <div className="px-2 pt-2 pb-3 space-y-1 font-inter">
                             <Link
-                                to="/"
+                                to="/home"
                                 className="block px-3 py-2 hover:text-gray-400"
                             >
                                 Home
                             </Link>
                             <Link
-                                to="/about"
+                                to="/upload"
                                 className="block px-3 py-2 hover:text-gray-400"
                             >
-                                About
+                                Upload
                             </Link>
                             <Link
-                                to="/services"
+                                to="/profile"
                                 className="block px-3 py-2 hover:text-gray-400"
                             >
-                                Services
-                            </Link>
-                            <Link
-                                to="/contact"
-                                className="block px-3 py-2 hover:text-gray-400"
-                            >
-                                Contact
+                                Profile
                             </Link>
                         </div>
                     </div>

@@ -8,7 +8,7 @@ export const mainRoutes: RouteObject[] = [
     element: <Home />,
   },
   {
-    path: '/uploads',
+    path: '/upload',
     element: <SalaryUploadForm />
   }
 ];
