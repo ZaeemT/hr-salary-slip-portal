@@ -79,7 +79,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border font-montserrat;
   }
   body {
     @apply bg-background text-foreground font-inter;
