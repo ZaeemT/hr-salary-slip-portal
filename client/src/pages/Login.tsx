@@ -1,4 +1,3 @@
-import { BackgroundBeams } from "@/components/backgrounds/background-beams"
 import { LoginForm } from "@/components/LoginForm"
 
 
@@ -9,7 +8,6 @@ export default function Login() {
       <div className="w-full max-w-sm">
         <LoginForm />
       </div>
-      <BackgroundBeams className="-z-10"/>
     </div>
   )
 }

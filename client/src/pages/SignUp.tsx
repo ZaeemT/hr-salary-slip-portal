@@ -1,4 +1,3 @@
-import { BackgroundBeams } from "@/components/backgrounds/background-beams"
 import { SignUpForm } from "@/components/SignUpForm"
 
 
@@ -6,10 +5,9 @@ export default function SignUp() {
 
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-sm z-10">
         <SignUpForm />
       </div>
-      <BackgroundBeams className="-z-10"/>
     </div>
   )
 }
