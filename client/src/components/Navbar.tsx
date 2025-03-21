@@ -15,9 +15,9 @@ const Navbar = () => {
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
                     <div className="flex-shrink-0">
-                        <Link to="/" className="flex items-center justify-start">
+                        <Link to="/home" className="flex items-center justify-start">
                             <Logo />
-                            <span className="font-exo2 font-bold text-xl">Fulgorix Labs</span>
+                            <span className="font-exo2 font-bold text-xl p-3">HR Salary Slip Portal</span>
                         </Link>
                     </div>
 

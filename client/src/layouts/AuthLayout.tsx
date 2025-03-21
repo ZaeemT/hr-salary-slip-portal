@@ -1,5 +1,7 @@
 import { DotPattern } from "@/components/magicui/dot-pattern";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
+import Logo from "@/components/Logo";
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -9,8 +11,16 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
         )}
       />
-      <div className="w-full max-w-md z-10 relative">
-        
+
+      {/* Logo */}
+      <div className="p-6">
+        <Link to="/" className="flex items-center justify-center mt-3">
+          <Logo />
+          <span className="font-exo2 font-bold text-xl p-3">HR Salary Slip Portal</span>
+        </Link>
+      </div>
+      
+      <div className="container w-full max-w-md z-10 relative">
         {children}
       </div>
     </div>
