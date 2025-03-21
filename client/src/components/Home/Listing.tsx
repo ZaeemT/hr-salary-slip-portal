@@ -53,7 +53,7 @@ const recentUploads = [
 
 export function Listing() {
     const [searchTerm, setSearchTerm] = useState("")
-    const [monthFilter, setMonthFilter] = useState("all")
+    const [monthFilter] = useState("all")
   
     // Filter uploads based on search term and month filter
     const filteredUploads = recentUploads.filter((upload) => {
