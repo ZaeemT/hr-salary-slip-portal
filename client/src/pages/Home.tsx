@@ -1,10 +1,11 @@
-import Hero from "@/components/Hero";
+import { Listing } from "@/components/Home/Listing";
+import { Tiles } from "@/components/Home/Tiles";
 
 const Home = () => {
   return (
     <>
-      <Hero />
-      
+      <Tiles />
+      <Listing />      
     </>
   );
 };
