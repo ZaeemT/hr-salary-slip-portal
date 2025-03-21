@@ -1,13 +1,17 @@
-import { Boxes } from "@/components/backgrounds/background-boxes";
+import { DotPattern } from "@/components/magicui/dot-pattern";
+import { cn } from "@/lib/utils";
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen flex items-center justify-center relative">
-      <div className="absolute inset-0 overflow-hidden">
-        <Boxes />
-      </div>
+      <DotPattern
+        className={cn(
+          "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
+        )}
+      />
       <div className="w-full max-w-md z-10 relative">
-      {children}
+        
+        {children}
       </div>
     </div>
   );
