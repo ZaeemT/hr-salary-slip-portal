@@ -69,9 +69,11 @@ export function LoginForm({
                   </button>
                 </div>
               </div>
+              <Link to="/home" className="text-sm underline underline-offset-4">
               <Button type="submit" className="w-full">
                 Login
               </Button>
+              </Link>
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
