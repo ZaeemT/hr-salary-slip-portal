@@ -6,6 +6,7 @@ import datetime
 from app.config import Config
 
 salary_bp = Blueprint('salary', __name__)
+
 @salary_bp.route('/upload', methods=['POST'])
 @jwt_required()
 def upload_salary_file():
@@ -59,6 +60,11 @@ def upload_salary_file():
                 'message': result
             }), 400
         
+        # Calculate totals
+        total_basic_salary = sum(record.get('basic_salary', 0) for record in result)
+        total_allowances = sum(record.get('allowances', 0) for record in result)
+        total_net_salary = sum(record.get('net_salary', 0) for record in result)
+        
         # Store the data in MongoDB
         file_info = {
             'original_filename': file.filename,
@@ -92,9 +98,14 @@ def upload_salary_file():
             'status': 'success',
             'message': 'Salary data processed and stored successfully',
             'details': {
+                'month': month,
+                'year': year,
                 'records_processed': len(result),
+                'total_basic_salary': total_basic_salary,
+                'total_allowances': total_allowances,
+                'total_net_salary': total_net_salary,
                 'batch_id': store_result['batch_id'],
-                'salary_records': store_result['data']
+                'salary_records': store_result['data'],
             }
         }), 201
         
@@ -155,7 +166,10 @@ def get_batches():
                 '_id': '$batch_id',
                 'file_name': {'$first': '$file_name'},
                 'upload_time': {'$first': '$upload_time'},
-                'record_count': {'$sum': 1}
+                'record_count': {'$sum': 1},
+                'month': {'$first': '$month'},
+                'year': {'$first': '$year'},
+                'status': {'$first': '$status'}
             }},
             {'$sort': {'upload_time': -1}}
         ]
@@ -167,7 +181,10 @@ def get_batches():
             'batch_id': batch['_id'],
             'file_name': batch['file_name'],
             'upload_time': batch['upload_time'],
-            'record_count': batch['record_count']
+            'record_count': batch['record_count'],
+            'month': batch['month'],
+            'year': batch['year'],
+            'status': batch['status']
         } for batch in batches]
         
         return jsonify({

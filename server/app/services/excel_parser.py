@@ -37,7 +37,7 @@ class ExcelParserService:
             df = pd.read_excel(file_path)
             
             # Validate required columns
-            required_columns = ['employee_id', 'name', 'email', 'salary']
+            required_columns = ['employee_id', 'name', 'email', 'department', 'position', 'basic_salary', 'allowances', 'deductions', 'net_salary']
             missing_columns = [col for col in required_columns if col not in df.columns]
             
             if missing_columns:
@@ -63,11 +63,14 @@ class ExcelParserService:
     def _clean_data(self, df):
         """Clean and validate the data"""
         # Remove rows with null values in critical fields
-        critical_fields = ['employee_id', 'name', 'email', 'salary']
+        critical_fields = ['employee_id', 'name', 'email', 'basic_salary', 'net_salary']
         df = df.dropna(subset=critical_fields)
         
         # Convert salary to float
-        df['salary'] = pd.to_numeric(df['salary'], errors='coerce')
+        df['basic_salary'] = pd.to_numeric(df['basic_salary'], errors='coerce')
+        df['allowances'] = pd.to_numeric(df['allowances'], errors='coerce')
+        df['deductions'] = pd.to_numeric(df['deductions'], errors='coerce')
+        df['net_salary'] = pd.to_numeric(df['net_salary'], errors='coerce')
         
         # Convert employee_id to string
         df['employee_id'] = df['employee_id'].astype(str)
