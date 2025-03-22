@@ -53,3 +53,6 @@ ENV/
 uploads/
 generated_pdfs/
 processed_data/
+
+
+project_context.txt
