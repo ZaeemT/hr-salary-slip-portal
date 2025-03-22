@@ -7,6 +7,10 @@ load_dotenv()
 class Config:
     # MongoDB settings
     MONGO_URI = os.environ.get('MONGO_URI')
+
+    # Secret key for JWT and other security
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    
     
     # File upload settings
     UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
