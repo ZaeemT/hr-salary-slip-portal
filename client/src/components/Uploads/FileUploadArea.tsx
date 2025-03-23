@@ -1,9 +1,7 @@
-"use client"
-
 import type React from "react"
 
 import { useRef, useState } from "react"
-import { HelpCircle, UploadCloud } from "lucide-react"
+import { UploadCloud } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
@@ -66,8 +64,8 @@ export function FileUploadArea({ onFilesSelected }: FileUploadAreaProps) {
           <UploadCloud className="h-6 w-6 text-primary" />
         </div>
         <div className="space-y-1">
-          <h3 className="text-lg font-semibold">Drag & drop your Excel files here</h3>
-          <p className="text-sm text-muted-foreground">Supported formats: .xlsx, .xls, .csv (Max size: 10MB)</p>
+          <h3 className="text-lg font-semibold">Drag & drop your Excel file here</h3>
+          <p className="text-sm text-muted-foreground">Upload a single Excel file (.xlsx, .xls, .csv) up to 10MB</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => fileInputRef.current?.click()}>

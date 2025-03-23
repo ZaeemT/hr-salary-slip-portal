@@ -19,10 +19,12 @@ import { UploadStatus } from "@/components/Uploads/UploadStatus"
 // Import utility functions
 import { isExcelFile } from "@/utils/fileCheck"
 import { getCurrentMonth } from "@/utils/getMonth"
+import { ParseExcel } from "@/services/salary.service"
+import { AlertCircle, CheckCircle2 } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export function SalaryUploadForm() {
   const [files, setFiles] = useState<File[]>([])
-  const [uploadProgress, setUploadProgress] = useState(0)
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle")
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [selectedMonth, setSelectedMonth] = useState<string>(getCurrentMonth())
@@ -30,32 +32,29 @@ export function SalaryUploadForm() {
   const [selectedDepartment, setSelectedDepartment] = useState<string>("All Departments")
   const [showPreview, setShowPreview] = useState(false)
   const [activeTab, setActiveTab] = useState("upload")
+  const [previewData, setPreviewData] = useState<any>(null)
 
   // Validate and add files
   const validateAndAddFiles = (newFiles: File[]) => {
     setErrorMessage(null)
-
-    // Check if any files were selected
-    if (newFiles.length === 0) {
-      return
-    }
-
-    // Validate file type
-    const invalidFiles = newFiles.filter((file) => !isExcelFile(file))
-    if (invalidFiles.length > 0) {
+    
+    // Only take the first file
+    const file = newFiles[0]
+    
+    if (!file) return
+    
+    if (!isExcelFile(file)) {
       setErrorMessage(`Invalid file type. Please upload Excel files only (.xlsx, .xls, .csv).`)
       return
     }
 
-    // Validate file size (max 10MB)
-    const oversizedFiles = newFiles.filter((file) => file.size > 10 * 1024 * 1024)
-    if (oversizedFiles.length > 0) {
+    if (file.size > 10 * 1024 * 1024) {
       setErrorMessage(`File size exceeds the 10MB limit.`)
       return
     }
 
-    // Add valid files
-    setFiles((prevFiles) => [...prevFiles, ...newFiles])
+    // Replace existing files with new file
+    setFiles([file])
   }
 
   // Remove a file
@@ -68,14 +67,13 @@ export function SalaryUploadForm() {
     setFiles([])
     setErrorMessage(null)
     setUploadStatus("idle")
-    setUploadProgress(0)
     setShowPreview(false)
   }
 
   // Handle file upload
   const handleUpload = async () => {
     if (files.length === 0) {
-      setErrorMessage("Please select at least one file to upload.")
+      setErrorMessage("Please select a file to upload.")
       return
     }
 
@@ -83,22 +81,16 @@ export function SalaryUploadForm() {
     setErrorMessage(null)
 
     try {
-      // Simulate upload progress
-      let progress = 0
-      const interval = setInterval(() => {
-        progress += 5
-        setUploadProgress(progress)
-
-        if (progress >= 100) {
-          clearInterval(interval)
-          setUploadStatus("success")
-          setShowPreview(true)
-          setActiveTab("preview")
-        }
-      }, 200)
-    } catch (error) {
+      const file = files[0]
+      const response = await ParseExcel(selectedMonth, selectedYear, file)
+      
+      setPreviewData(response)
+      setUploadStatus("success")
+      setShowPreview(true)
+      setActiveTab("preview")
+    } catch (error: any) {
       setUploadStatus("error")
-      setErrorMessage("Failed to upload files. Please try again.")
+      setErrorMessage(error.message || "Failed to upload file. Please try again.")
       setShowPreview(false)
     }
   }
@@ -110,6 +102,7 @@ export function SalaryUploadForm() {
     }
     setActiveTab(value);
   }
+
 
   return (
     <div className="flex flex-col gap-6">
@@ -152,9 +145,9 @@ export function SalaryUploadForm() {
 
               {/* File upload area */}
               <FileUploadArea onFilesSelected={validateAndAddFiles} />
-
-              {/* Upload status and errors */}
-              <UploadStatus status={uploadStatus} progress={uploadProgress} errorMessage={errorMessage} />
+              
+              {/* Render upload status */}
+              <UploadStatus status={uploadStatus} errorMessage={errorMessage} />
 
               {/* File list */}
               <FileList files={files} onRemoveFile={removeFile} disabled={uploadStatus === "uploading"} />
@@ -197,9 +190,10 @@ export function SalaryUploadForm() {
         </TabsContent>
 
         <TabsContent value="preview" className="mt-4 space-y-6">
-          {showPreview && uploadStatus === "success" && (
+          {showPreview && uploadStatus === "success" && previewData && (
             <>
               <DataPreview
+                data={previewData}
                 selectedMonth={selectedMonth}
                 selectedYear={selectedYear}
                 selectedDepartment={selectedDepartment}
