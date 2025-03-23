@@ -9,15 +9,39 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
 import { useState } from "react"
 import { Link } from "react-router-dom"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { signUpSchema, type SignUpFormData } from "@/schemas/auth.schema"
+
+interface SignUpFormProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit'> {
+  onSubmit: (username: string, email: string, password: string) => Promise<any>;
+  loading?: boolean;
+  error?: string | null;
+}
 
 export function SignUpForm({
   className,
+  onSubmit,
+  loading = false,
+  error,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: SignUpFormProps) {
   const [showPassword, setShowPassword] = useState(false)
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+  })
+
+  const onSubmitHandler = async (data: SignUpFormData) => {
+    await onSubmit(data.username, data.email, data.password)
+  }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -29,16 +53,20 @@ export function SignUpForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit(onSubmitHandler)}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="username">Username</Label>
                 <Input
-                  id="fullName"
+                  id="username"
                   type="text"
-                  placeholder="John Doe"
-                  required
+                  placeholder="johndoe"
+                  {...register("username")}
+                  disabled={loading}
                 />
+                {errors.username && (
+                  <p className="text-sm text-red-500">{errors.username.message}</p>
+                )}
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -46,18 +74,21 @@ export function SignUpForm({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  required
+                  {...register("email")}
+                  disabled={loading}
                 />
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                )}
               </div>
               <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
+                <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Input 
                     id="password" 
-                    type={showPassword ? "text" : "password"} 
-                    required 
+                    type={showPassword ? "text" : "password"}
+                    {...register("password")}
+                    disabled={loading}
                   />
                   <button
                     type="button"
@@ -71,9 +102,24 @@ export function SignUpForm({
                     )}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="text-sm text-red-500">{errors.password.message}</p>
+                )}
               </div>
-              <Button type="submit" className="w-full">
-                Sign Up
+              {error && (
+                <div className="text-sm text-red-500">
+                  {error}
+                </div>
+              )}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Creating account...</span>
+                  </div>
+                ) : (
+                  "Sign Up"
+                )}
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
