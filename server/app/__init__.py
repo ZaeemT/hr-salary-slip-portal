@@ -1,4 +1,5 @@
 from flask import Flask
+from flask_cors import CORS
 from app.extensions import mongo, jwt
 from app.config import Config
 from app.routes.auth_routes import auth_bp
@@ -8,6 +9,15 @@ from app.routes.pdf_email_routes import process_bp
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    
+    # Initialize CORS
+    CORS(app, resources={
+        r"/*": {
+            "origins": ["http://localhost:5173"],  # Add your frontend URL
+            # "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            # "allow_headers": ["Content-Type", "Authorization"]
+        }
+    })
     
     # Initialize extensions
     mongo.init_app(app)
