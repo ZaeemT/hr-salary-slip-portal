@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle2, Download, MoreHorizontal, Upload, Loader2 } from "lucide-react"
+import { CheckCircle2, MoreHorizontal, Upload, Loader2 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Link } from "react-router-dom"
 import { cn } from "@/lib/utils"
@@ -25,7 +25,7 @@ interface ListingProps {
 
 export function Listing({ batches, loading }: ListingProps) {
     const [searchTerm, setSearchTerm] = useState("")
-    const [monthFilter] = useState("all")
+    // const [monthFilter] = useState("all")
   
     // Filter batches based on search term
     const filteredBatches = batches.filter((batch) => {
