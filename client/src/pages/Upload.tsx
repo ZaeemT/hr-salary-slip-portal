@@ -20,8 +20,6 @@ import { UploadStatus } from "@/components/Uploads/UploadStatus"
 import { isExcelFile } from "@/utils/fileCheck"
 import { getCurrentMonth } from "@/utils/getMonth"
 import { ParseExcel } from "@/services/salary.service"
-import { AlertCircle, CheckCircle2 } from "lucide-react"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export function SalaryUploadForm() {
   const [files, setFiles] = useState<File[]>([])
@@ -199,7 +197,7 @@ export function SalaryUploadForm() {
                 selectedDepartment={selectedDepartment}
                 onBack={() => setActiveTab("upload")}
               />
-              <DataSummary />
+              <DataSummary data={previewData}/>
             </>
           )}
         </TabsContent>
