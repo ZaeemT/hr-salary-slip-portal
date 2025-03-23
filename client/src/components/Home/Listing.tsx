@@ -7,6 +7,7 @@ import { CheckCircle2, MoreHorizontal, Upload, Loader2 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Link } from "react-router-dom"
 import { cn } from "@/lib/utils"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 
 interface BatchData {
   batch_id: string;
@@ -21,10 +22,24 @@ interface BatchData {
 interface ListingProps {
   batches: BatchData[];
   loading: boolean;
+  onDeleteBatch: (batchId: string) => Promise<void>;
 }
 
-export function Listing({ batches, loading }: ListingProps) {
+export function Listing({ batches, loading, onDeleteBatch }: ListingProps) {
     const [searchTerm, setSearchTerm] = useState("")
+    const [batchToDelete, setBatchToDelete] = useState<string | null>(null)
+
+    const handleDelete = async (batchId: string) => {
+        setBatchToDelete(batchId);
+    };
+
+    const confirmDelete = async () => {
+        if (batchToDelete) {
+            await onDeleteBatch(batchToDelete);
+            setBatchToDelete(null);
+        }
+    };
+
     // const [monthFilter] = useState("all")
   
     // Filter batches based on search term
@@ -161,7 +176,10 @@ export function Listing({ batches, loading }: ListingProps) {
                                                     >
                                                         Email to Employees
                                                     </DropdownMenuItem>
-                                                    <DropdownMenuItem className="text-destructive">
+                                                    <DropdownMenuItem 
+                                                        onClick={() => handleDelete(batch.batch_id)}
+                                                        className="text-destructive"
+                                                    >
                                                         Delete Batch
                                                     </DropdownMenuItem>
                                                 </DropdownMenuContent>
@@ -193,6 +211,26 @@ export function Listing({ batches, loading }: ListingProps) {
                     </Button>
                 </div>
             </div>
+            <AlertDialog open={!!batchToDelete} onOpenChange={() => setBatchToDelete(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete the
+                            batch and all its associated data.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction 
+                            onClick={confirmDelete}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                            Delete
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     )
 }
