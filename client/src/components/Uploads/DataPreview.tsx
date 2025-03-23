@@ -1,6 +1,4 @@
-"use client"
-
-import { ArrowRight, FileSpreadsheet, Info } from "lucide-react"
+import { ArrowRight, FileSpreadsheet, Info, Loader2 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -42,9 +40,19 @@ interface DataPreviewProps {
   selectedYear: string
   selectedDepartment: string
   onBack: () => void
+  onGenerateSlips: (batchId: string) => Promise<void>
+  processing: boolean
 }
 
-export function DataPreview({ data, selectedMonth, selectedYear, selectedDepartment, onBack }: DataPreviewProps) {
+export function DataPreview({ 
+  data, 
+  selectedMonth, 
+  selectedYear, 
+  selectedDepartment, 
+  onBack,
+  onGenerateSlips,
+  processing 
+}: DataPreviewProps) {
   console.log("DataPreview received data:", data) // Debug log
 
   if (!data?.details) {
@@ -130,12 +138,25 @@ export function DataPreview({ data, selectedMonth, selectedYear, selectedDepartm
         </div>
       </CardContent>
       <CardFooter className="flex justify-between border-t p-6">
-        <Button variant="outline" onClick={onBack}>
+        <Button variant="outline" onClick={onBack} disabled={processing}>
           Back to Upload
         </Button>
-        <Button className="gap-2">
-          <ArrowRight className="h-4 w-4" />
-          <span>Generate Salary Slips</span>
+        <Button 
+          className="gap-2"
+          onClick={() => onGenerateSlips(details.batch_id)}
+          disabled={processing}
+        >
+          {processing ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Processing...</span>
+            </>
+          ) : (
+            <>
+              <ArrowRight className="h-4 w-4" />
+              <span>Generate Salary Slips</span>
+            </>
+          )}
         </Button>
       </CardFooter>
     </Card>

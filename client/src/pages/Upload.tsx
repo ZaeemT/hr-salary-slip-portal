@@ -1,11 +1,10 @@
-"use client"
-
 import { useState } from "react"
 import { Check, Loader2, UploadCloud } from "lucide-react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FileSpreadsheet } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
 // Import custom components
 import { UploadParameters } from "@/components/Uploads/UploadParameters"
@@ -19,7 +18,8 @@ import { UploadStatus } from "@/components/Uploads/UploadStatus"
 // Import utility functions
 import { isExcelFile } from "@/utils/fileCheck"
 import { getCurrentMonth } from "@/utils/getMonth"
-import { ParseExcel } from "@/services/salary.service"
+import { ParseExcel, SendSlips } from "@/services/salary.service"
+import { useToast } from "@/hooks/use-toast"
 
 export function SalaryUploadForm() {
   const [files, setFiles] = useState<File[]>([])
@@ -31,6 +31,9 @@ export function SalaryUploadForm() {
   const [showPreview, setShowPreview] = useState(false)
   const [activeTab, setActiveTab] = useState("upload")
   const [previewData, setPreviewData] = useState<any>(null)
+  const { toast } = useToast()
+  const [processingSlips, setProcessingSlips] = useState(false)
+  const navigate = useNavigate()
 
   // Validate and add files
   const validateAndAddFiles = (newFiles: File[]) => {
@@ -101,6 +104,34 @@ export function SalaryUploadForm() {
     setActiveTab(value);
   }
 
+  const handleGenerateSlips = async (batchId: string) => {
+    setProcessingSlips(true)
+    try {
+      const response: any = await SendSlips(batchId)
+      if (response.status === 'success') {
+        toast({
+          title: "Success",
+          description: "Salary slips have been generated and sent to employees.",
+        })
+
+        navigate('/home')
+      } else {
+        toast({
+          title: "Error",
+          description: response.message || "Failed to generate salary slips",
+          variant: "destructive",
+        })
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to generate salary slips",
+        variant: "destructive",
+      })
+    } finally {
+      setProcessingSlips(false)
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -196,6 +227,8 @@ export function SalaryUploadForm() {
                 selectedYear={selectedYear}
                 selectedDepartment={selectedDepartment}
                 onBack={() => setActiveTab("upload")}
+                onGenerateSlips={handleGenerateSlips}
+                processing={processingSlips}
               />
               <DataSummary data={previewData}/>
             </>
