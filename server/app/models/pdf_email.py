@@ -74,7 +74,7 @@ class PdfEmailProcessor:
                 return False, email_result
             
             # Update record status
-            self._update_record_status(record['_id'], 'completed')
+            # self._update_record_status(record['_id'], 'completed')
             
             return True, "Salary slip processed and sent successfully"
             
