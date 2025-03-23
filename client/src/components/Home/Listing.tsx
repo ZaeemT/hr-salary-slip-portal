@@ -23,9 +23,10 @@ interface ListingProps {
   batches: BatchData[];
   loading: boolean;
   onDeleteBatch: (batchId: string) => Promise<void>;
+  onSendSlips: (batchId: string) => Promise<void>;
 }
 
-export function Listing({ batches, loading, onDeleteBatch }: ListingProps) {
+export function Listing({ batches, loading, onDeleteBatch, onSendSlips }: ListingProps) {
     const [searchTerm, setSearchTerm] = useState("")
     const [batchToDelete, setBatchToDelete] = useState<string | null>(null)
 
@@ -47,6 +48,26 @@ export function Listing({ batches, loading, onDeleteBatch }: ListingProps) {
       const searchString = `${batch.month} ${batch.year} ${batch.batch_id}`.toLowerCase()
       return searchString.includes(searchTerm.toLowerCase())
     })
+
+    const                                                                               renderDropdownContent = (batch: BatchData) => (
+        <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Options</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+                onClick={() => onSendSlips(batch.batch_id)}
+                disabled={batch.status !== 'pending'}
+            >
+                Email to Employees
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+                onClick={() => handleDelete(batch.batch_id)}
+                className="text-destructive"
+                disabled={batch.status === 'processing'}
+            >
+                Delete Batch
+            </DropdownMenuItem>
+        </DropdownMenuContent>
+    );
 
     return (
         <div className="rounded-lg border bg-card gap-6 py-3">
@@ -140,6 +161,7 @@ export function Listing({ batches, loading, onDeleteBatch }: ListingProps) {
                                             variant="outline"
                                             className={cn(
                                                 "bg-yellow-50 text-yellow-700",
+                                                batch.status === 'processing' && "bg-blue-50 text-blue-700",
                                                 batch.status === 'completed' && "bg-green-50 text-green-700",
                                                 batch.status === 'failed' && "bg-red-50 text-red-700"
                                             )}
@@ -166,23 +188,7 @@ export function Listing({ batches, loading, onDeleteBatch }: ListingProps) {
                                                         <span className="sr-only">More options</span>
                                                     </Button>
                                                 </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuLabel>Options</DropdownMenuLabel>
-                                                    {/* <DropdownMenuItem>View Details</DropdownMenuItem>
-                                                    <DropdownMenuItem>Download Report</DropdownMenuItem> */}
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem 
-                                                        disabled={batch.status == 'completed'}
-                                                    >
-                                                        Email to Employees
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem 
-                                                        onClick={() => handleDelete(batch.batch_id)}
-                                                        className="text-destructive"
-                                                    >
-                                                        Delete Batch
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
+                                                {renderDropdownContent(batch)}
                                             </DropdownMenu>
                                         </div>
                                     </TableCell>

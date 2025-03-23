@@ -14,4 +14,5 @@ export const apiUrl = {
   changePassword: 'auth/change-password',
   batchListing: 'salary/batches',
   removeBatch: 'salary/salary-data',
+  processSlips: 'process/generate-and-send'
 }

@@ -1,6 +1,6 @@
 import { Listing } from "@/components/Home/Listing";
 import { Tiles } from "@/components/Home/Tiles";
-import { GetBatchListing, DeleteBatch } from "@/services/salary.service";
+import { GetBatchListing, DeleteBatch, SendSlips } from "@/services/salary.service";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -66,6 +66,50 @@ const Home = () => {
     }
   };
 
+  const handleSendSlips = async (batchId: string) => {
+    try {
+      
+      // Update the batch status in local state
+      setBatches(prevBatches => 
+        prevBatches.map(batch => 
+          batch.batch_id === batchId 
+          ? { ...batch, status: 'processing' } 
+          : batch
+        )
+      );
+      
+      const response:any = await SendSlips(batchId);
+      
+      if (response.status === 'success') {
+        setBatches(prevBatches => 
+          prevBatches.map(batch => 
+            batch.batch_id === batchId 
+            ? { ...batch, status: 'completed' } 
+            : batch
+          )
+        );
+        
+        toast({
+          title: "Success",
+          description: "Salary slips have been sent to employees.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: response.message || "Failed to process batch",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.response?.data?.message || "Failed to process batch",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <>
       <Tiles />
@@ -73,6 +117,7 @@ const Home = () => {
         batches={batches} 
         loading={loading} 
         onDeleteBatch={handleDeleteBatch}
+        onSendSlips={handleSendSlips}
       />      
     </>
   );
