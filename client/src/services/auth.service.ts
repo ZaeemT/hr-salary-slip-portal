@@ -26,15 +26,15 @@ export const GetAuthUser = () => {
 
 export const Register = async (username: string, email: string, password: string) => {
     const response: any = await POST(apiUrl.register, {username, email, password});
-    await SetToken(response.data?.token);
-    await SetAuthUser(JSON.stringify(response.data?.user));
+    await SetToken(response?.access_token);
+    await SetAuthUser(JSON.stringify(response?.user));
     return response;
 }
 
 export const Login = async (email: string, password: string) => {
     const response: any = await POST(apiUrl.login, {email, password});
-    await SetToken(response.data?.access_token);
-    await SetAuthUser(JSON.stringify(response.data?.user));
+    await SetToken(response?.access_token);
+    await SetAuthUser(JSON.stringify(response?.user));
     return response;
 }
 
