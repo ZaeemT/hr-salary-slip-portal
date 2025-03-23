@@ -2,6 +2,7 @@ import { DotPattern } from "@/components/magicui/dot-pattern";
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import Logo from "@/components/Logo";
+import { ModeToggle } from "@/components/mode-toggle";
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -11,6 +12,11 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           "[mask-image:radial-gradient(600px_circle_at_center,white,transparent)]",
         )}
       />
+
+      {/* Theme Toggle */}
+      <div className="absolute top-4 right-4 z-10">
+        <ModeToggle />
+      </div>
 
       {/* Logo */}
       <div className="p-6">
