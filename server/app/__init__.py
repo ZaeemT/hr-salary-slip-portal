@@ -3,6 +3,7 @@ from app.extensions import mongo, jwt
 from app.config import Config
 from app.routes.auth_routes import auth_bp
 from app.routes.salary_routes import salary_bp
+from app.routes.pdf_email_routes import process_bp
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -15,6 +16,7 @@ def create_app(config_class=Config):
     # Register blueprints
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(salary_bp, url_prefix='/api/salary')
+    app.register_blueprint(process_bp, url_prefix='/api/process')
     
     # Health check route
     @app.route('/health', methods=['GET'])
