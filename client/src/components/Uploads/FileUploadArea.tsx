@@ -76,9 +76,9 @@ export function FileUploadArea({ onFilesSelected }: FileUploadAreaProps) {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button variant="outline" size="icon">
+                {/* <Button variant="outline" size="icon">
                   <HelpCircle className="h-4 w-4" />
-                </Button>
+                </Button> */}
               </TooltipTrigger>
               <TooltipContent className="max-w-[300px]">
                 <p>Your Excel file should contain the following columns:</p>

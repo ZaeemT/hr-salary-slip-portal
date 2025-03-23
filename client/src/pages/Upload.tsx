@@ -18,13 +18,14 @@ import { UploadStatus } from "@/components/Uploads/UploadStatus"
 
 // Import utility functions
 import { isExcelFile } from "@/utils/fileCheck"
+import { getCurrentMonth } from "@/utils/getMonth"
 
 export function SalaryUploadForm() {
   const [files, setFiles] = useState<File[]>([])
   const [uploadProgress, setUploadProgress] = useState(0)
   const [uploadStatus, setUploadStatus] = useState<"idle" | "uploading" | "success" | "error">("idle")
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [selectedMonth, setSelectedMonth] = useState<string>(new Date().getMonth().toString().padStart(2, "0"))
+  const [selectedMonth, setSelectedMonth] = useState<string>(getCurrentMonth())
   const [selectedYear, setSelectedYear] = useState<string>(new Date().getFullYear().toString())
   const [selectedDepartment, setSelectedDepartment] = useState<string>("All Departments")
   const [showPreview, setShowPreview] = useState(false)
