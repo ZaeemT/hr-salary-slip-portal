@@ -1,13 +1,33 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Logo from './Logo';
+import { ModeToggle } from './mode-toggle';
+import { LogOut } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Logout } from '@/services/auth.service';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
+
+    const handleLogout = () => {
+        Logout();
+        navigate('/');
+    };
+
+    const isActivePath = (path: string) => {
+        return location.pathname === path
+    }
+
+    const getLinkClass = (path: string) => {
+        return `hover:text-gray-400 ${isActivePath(path) ? 'text-primary font-semibold' : ''}`
+    }
 
     return (
         <nav className="shadow-lg bg-secondary">
@@ -22,16 +42,26 @@ const Navbar = () => {
                     </div>
 
                     {/* Desktop Menu */}
-                    <div className="hidden md:flex space-x-8 font-inter">
-                        <Link to="/home" className='hover:text-gray-400'>
+                    <div className="hidden md:flex items-center space-x-6 font-inter">
+                        <Link to="/home" className={getLinkClass('/home')}>
                             Home
                         </Link>
-                        <Link to="/upload" className='hover:text-gray-400'>
+                        <Link to="/upload" className={getLinkClass('/upload')}>
                             Upload
                         </Link>
-                        <Link to="/profile" className='hover:text-gray-400'>
+                        <Link to="/profile" className={getLinkClass('/profile')}>
                             Profile
                         </Link>
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            onClick={handleLogout}
+                            className="gap-2 hover:text-destructive"
+                        >
+                            <LogOut className="h-4 w-4" />
+                            Logout
+                        </Button>
+                        <ModeToggle />
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -65,22 +95,42 @@ const Navbar = () => {
                         <div className="px-2 pt-2 pb-3 space-y-1 font-inter">
                             <Link
                                 to="/home"
-                                className="block px-3 py-2 hover:text-gray-400"
+                                className={`block px-3 py-2 hover:text-gray-400 ${
+                                    isActivePath('/home') ? 'text-primary font-semibold' : ''
+                                }`}
                             >
                                 Home
                             </Link>
                             <Link
                                 to="/upload"
-                                className="block px-3 py-2 hover:text-gray-400"
+                                className={`block px-3 py-2 hover:text-gray-400 ${
+                                    isActivePath('/upload') ? 'text-primary font-semibold' : ''
+                                }`}
                             >
                                 Upload
                             </Link>
                             <Link
                                 to="/profile"
-                                className="block px-3 py-2 hover:text-gray-400"
+                                className={`block px-3 py-2 hover:text-gray-400 ${
+                                    isActivePath('/profile') ? 'text-primary font-semibold' : ''
+                                }`}
                             >
                                 Profile
                             </Link>
+                            <div className="px-3 py-2">
+                                <Button 
+                                    variant="ghost" 
+                                    size="sm" 
+                                    onClick={handleLogout}
+                                    className="gap-2 w-full justify-start hover:text-destructive"
+                                >
+                                    <LogOut className="h-4 w-4" />
+                                    Logout
+                                </Button>
+                                <div className="px-3 py-2">
+                                    <ModeToggle />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}
