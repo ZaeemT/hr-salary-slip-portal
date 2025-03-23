@@ -2,7 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-
+html, body {
+  opacity: 1 !important;
+  filter: none !important;
+  pointer-events: all !important;
+  backdrop-filter: none !important;
+}
 
 @media (prefers-color-scheme: light) {
   :root {
@@ -89,3 +94,6 @@
     @apply font-montserrat;
   }
 }
+
+
+
