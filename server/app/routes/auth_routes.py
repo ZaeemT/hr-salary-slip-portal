@@ -40,11 +40,36 @@ def register():
                 'message': 'Username or email already exists'
             }), 409
         
+        # Get the created user
+        user = UserModel.find_by_id(user_id)
+        
+        # Create tokens
+        access_token = create_access_token(
+            identity=str(user['_id']),
+            additional_claims={
+                'username': user['username'],
+                'email': user['email'],
+                'role': user.get('role', 'HR Admin')
+            },
+            expires_delta=timedelta(hours=4)
+        )
+        
+        refresh_token = create_refresh_token(
+            identity=str(user['_id']),
+            expires_delta=timedelta(days=30)
+        )
         
         return jsonify({
             'status': 'success',
             'message': 'User registered successfully',
-            'user_id': user_id
+            'user': {
+                'id': str(user['_id']),
+                'username': user['username'],
+                'email': user['email'],
+                'role': user.get('role', 'HR Admin')
+            },
+            'access_token': access_token,
+            'refresh_token': refresh_token
         }), 201
         
     except Exception as e:
@@ -83,7 +108,7 @@ def login():
                 'email': user['email'],
                 'role': user.get('role', 'user')
             },
-            expires_delta=timedelta(hours=1)
+            expires_delta=timedelta(hours=4)
         )
         
         refresh_token = create_refresh_token(
@@ -136,7 +161,7 @@ def refresh():
                 'email': user['email'],
                 'role': user.get('role', 'user')
             },
-            expires_delta=timedelta(hours=1)
+            expires_delta=timedelta(hours=4)
         )
         
         
