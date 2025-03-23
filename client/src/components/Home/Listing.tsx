@@ -43,13 +43,12 @@ export function Listing({ batches, loading, onDeleteBatch, onSendSlips }: Listin
 
     // const [monthFilter] = useState("all")
   
-    // Filter batches based on search term
     const filteredBatches = batches.filter((batch) => {
-      const searchString = `${batch.month} ${batch.year} ${batch.batch_id}`.toLowerCase()
+      const searchString = `${batch.month} ${batch.year} ${batch.batch_id} ${batch.file_name}`.toLowerCase()
       return searchString.includes(searchTerm.toLowerCase())
     })
 
-    const                                                                               renderDropdownContent = (batch: BatchData) => (
+    const renderDropdownContent = (batch: BatchData) => (
         <DropdownMenuContent align="end">
             <DropdownMenuLabel>Options</DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -81,7 +80,7 @@ export function Listing({ batches, loading, onDeleteBatch, onSendSlips }: Listin
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex flex-1 items-center gap-2">
                         <Input
-                            placeholder="Search by month or ID..."
+                            placeholder="Search by file name, month or ID..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="max-w-[300px]"
@@ -125,7 +124,8 @@ export function Listing({ batches, loading, onDeleteBatch, onSendSlips }: Listin
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Batch ID</TableHead>
+                            <TableHead>ID</TableHead>
+                            <TableHead>File Name</TableHead>
                             <TableHead>Upload Date</TableHead>
                             <TableHead>Month/Year</TableHead>
                             <TableHead className="hidden md:table-cell">Employee Counts</TableHead>
@@ -139,7 +139,7 @@ export function Listing({ batches, loading, onDeleteBatch, onSendSlips }: Listin
                                 <TableCell colSpan={6} className="h-24 text-center">
                                     <div className="flex items-center justify-center">
                                         <Loader2 className="h-6 w-6 animate-spin" />
-                                        <span className="ml-2">Loading batches...</span>
+                                        <span className="ml-2">Loading uploads...</span>
                                     </div>
                                 </TableCell>
                             </TableRow>
@@ -147,7 +147,10 @@ export function Listing({ batches, loading, onDeleteBatch, onSendSlips }: Listin
                             filteredBatches.map((batch) => (
                                 <TableRow key={batch.batch_id}>
                                     <TableCell className="font-medium">
-                                        {batch.batch_id.slice(0, 8)}...
+                                        {batch.batch_id.slice(0, 4).toUpperCase()}
+                                    </TableCell>
+                                    <TableCell className="max-w-[200px] truncate" title={batch.file_name}>
+                                        {batch.file_name}
                                     </TableCell>
                                     <TableCell>
                                         {new Date(batch.upload_time.$date).toLocaleDateString()}
@@ -197,7 +200,7 @@ export function Listing({ batches, loading, onDeleteBatch, onSendSlips }: Listin
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={6} className="h-24 text-center">
-                                    No batches found.
+                                    No uploads found!
                                 </TableCell>
                             </TableRow>
                         )}
@@ -206,17 +209,18 @@ export function Listing({ batches, loading, onDeleteBatch, onSendSlips }: Listin
             </div>
             <div className="flex items-center justify-between px-6 py-4">
                 <div className="text-sm text-muted-foreground">
-                    Showing <strong>{filteredBatches.length}</strong> of <strong>{batches.length}</strong> batches
+                    Showing total <strong>{filteredBatches.length}</strong> uploads
                 </div>
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm" disabled>
                         Previous
                     </Button>
                     <Button variant="outline" size="sm" disabled>
                         Next
                     </Button>
-                </div>
+                </div> */}
             </div>
+
             <AlertDialog open={!!batchToDelete} onOpenChange={() => setBatchToDelete(null)}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
