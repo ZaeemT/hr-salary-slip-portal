@@ -3,73 +3,42 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { CheckCircle2, Download, MoreHorizontal, Upload } from "lucide-react"
+import { CheckCircle2, Download, MoreHorizontal, Upload, Loader2 } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Link } from "react-router-dom"
+import { cn } from "@/lib/utils"
 
-// Mock data for salary slip uploads
-const recentUploads = [
-    {
-        id: "SLU-001",
-        date: "2025-03-15",
-        month: "March 2025",
-        employeeCount: 124,
-        status: "Completed",
-        downloadCount: 98,
-    },
-    {
-        id: "SLU-002",
-        date: "2025-02-15",
-        month: "February 2025",
-        employeeCount: 122,
-        status: "Completed",
-        downloadCount: 120,
-    },
-    {
-        id: "SLU-003",
-        date: "2025-01-15",
-        month: "January 2025",
-        employeeCount: 120,
-        status: "Completed",
-        downloadCount: 118,
-    },
-    {
-        id: "SLU-004",
-        date: "2024-12-15",
-        month: "December 2024",
-        employeeCount: 118,
-        status: "Completed",
-        downloadCount: 115,
-    },
-    {
-        id: "SLU-005",
-        date: "2024-11-15",
-        month: "November 2024",
-        employeeCount: 115,
-        status: "Completed",
-        downloadCount: 112,
-    },
-]
+interface BatchData {
+  batch_id: string;
+  file_name: string;
+  upload_time: { $date: string };
+  record_count: number;
+  month: string;
+  year: string;
+  status: 'pending' | 'completed' | 'failed' | 'processing';
+}
 
-export function Listing() {
+interface ListingProps {
+  batches: BatchData[];
+  loading: boolean;
+}
+
+export function Listing({ batches, loading }: ListingProps) {
     const [searchTerm, setSearchTerm] = useState("")
     const [monthFilter] = useState("all")
   
-    // Filter uploads based on search term and month filter
-    const filteredUploads = recentUploads.filter((upload) => {
-      const matchesSearch =
-        upload.month.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        upload.id.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesMonth = monthFilter === "all" || upload.month.includes(monthFilter)
-      return matchesSearch && matchesMonth
+    // Filter batches based on search term
+    const filteredBatches = batches.filter((batch) => {
+      const searchString = `${batch.month} ${batch.year} ${batch.batch_id}`.toLowerCase()
+      return searchString.includes(searchTerm.toLowerCase())
     })
-  
+
     return (
         <div className="rounded-lg border bg-card gap-6 py-3">
             <div className="flex flex-col space-y-1.5 p-6">
                 <h3 className="text-2xl font-semibold leading-none tracking-tight">Recent Salary Slip Uploads</h3>
                 <p className="text-sm text-muted-foreground">
-                    View and manage all salary slip uploads. Download generated slips for employees.
+                    View and manage all salary slip uploads.
                 </p>
             </div>
             <div className="p-6 pt-0">
@@ -120,39 +89,61 @@ export function Listing() {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>ID</TableHead>
+                            <TableHead>Batch ID</TableHead>
                             <TableHead>Upload Date</TableHead>
-                            <TableHead>Month</TableHead>
-                            <TableHead className="hidden md:table-cell">Employees</TableHead>
+                            <TableHead>Month/Year</TableHead>
+                            <TableHead className="hidden md:table-cell">Employee Counts</TableHead>
                             <TableHead className="hidden sm:table-cell">Status</TableHead>
-                            <TableHead className="hidden lg:table-cell">Downloads</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {filteredUploads.length > 0 ? (
-                            filteredUploads.map((upload) => (
-                                <TableRow key={upload.id}>
-                                    <TableCell className="font-medium">{upload.id}</TableCell>
-                                    <TableCell>{new Date(upload.date).toLocaleDateString()}</TableCell>
-                                    <TableCell>{upload.month}</TableCell>
-                                    <TableCell className="hidden md:table-cell">{upload.employeeCount}</TableCell>
+                        {loading ? (
+                            <TableRow>
+                                <TableCell colSpan={6} className="h-24 text-center">
+                                    <div className="flex items-center justify-center">
+                                        <Loader2 className="h-6 w-6 animate-spin" />
+                                        <span className="ml-2">Loading batches...</span>
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ) : filteredBatches.length > 0 ? (
+                            filteredBatches.map((batch) => (
+                                <TableRow key={batch.batch_id}>
+                                    <TableCell className="font-medium">
+                                        {batch.batch_id.slice(0, 8)}...
+                                    </TableCell>
+                                    <TableCell>
+                                        {new Date(batch.upload_time.$date).toLocaleDateString()}
+                                    </TableCell>
+                                    <TableCell>{`${batch.month} ${batch.year}`}</TableCell>
+                                    <TableCell className="hidden md:table-cell">
+                                        {batch.record_count}
+                                    </TableCell>
                                     <TableCell className="hidden sm:table-cell">
                                         <Badge
                                             variant="outline"
-                                            className="bg-green-50 text-green-700 hover:bg-green-50 hover:text-green-700"
+                                            className={cn(
+                                                "bg-yellow-50 text-yellow-700",
+                                                batch.status === 'completed' && "bg-green-50 text-green-700",
+                                                batch.status === 'failed' && "bg-red-50 text-red-700"
+                                            )}
                                         >
                                             <CheckCircle2 className="mr-1 h-3 w-3" />
-                                            {upload.status}
+                                            {batch.status.charAt(0).toUpperCase() + batch.status.slice(1)}
                                         </Badge>
                                     </TableCell>
-                                    <TableCell className="hidden lg:table-cell">{upload.downloadCount}</TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <Button variant="outline" size="sm" className="h-8 gap-1">
+                                            {/* <Button 
+                                                variant="outline" 
+                                                size="sm" 
+                                                className="h-8 gap-1"
+                                                disabled={batch.status === 'pending'}
+                                            >
                                                 <Download className="h-3 w-3" />
                                                 <span className="hidden sm:inline">Download All</span>
-                                            </Button>
+                                            </Button> */}
                                             <DropdownMenu>
                                                 <DropdownMenuTrigger asChild>
                                                     <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -162,11 +153,17 @@ export function Listing() {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end">
                                                     <DropdownMenuLabel>Options</DropdownMenuLabel>
-                                                    <DropdownMenuItem>View Details</DropdownMenuItem>
-                                                    <DropdownMenuItem>Download Report</DropdownMenuItem>
+                                                    {/* <DropdownMenuItem>View Details</DropdownMenuItem>
+                                                    <DropdownMenuItem>Download Report</DropdownMenuItem> */}
                                                     <DropdownMenuSeparator />
-                                                    <DropdownMenuItem>Email to Employees</DropdownMenuItem>
-                                                    <DropdownMenuItem className="text-destructive">Delete Upload</DropdownMenuItem>
+                                                    <DropdownMenuItem 
+                                                        disabled={batch.status == 'completed'}
+                                                    >
+                                                        Email to Employees
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem className="text-destructive">
+                                                        Delete Batch
+                                                    </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </div>
@@ -175,8 +172,8 @@ export function Listing() {
                             ))
                         ) : (
                             <TableRow>
-                                <TableCell colSpan={7} className="h-24 text-center">
-                                    No results found.
+                                <TableCell colSpan={6} className="h-24 text-center">
+                                    No batches found.
                                 </TableCell>
                             </TableRow>
                         )}
@@ -185,7 +182,7 @@ export function Listing() {
             </div>
             <div className="flex items-center justify-between px-6 py-4">
                 <div className="text-sm text-muted-foreground">
-                    Showing <strong>{filteredUploads.length}</strong> of <strong>{recentUploads.length}</strong> uploads
+                    Showing <strong>{filteredBatches.length}</strong> of <strong>{batches.length}</strong> batches
                 </div>
                 <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm" disabled>

@@ -12,4 +12,5 @@ export const apiUrl = {
   login: 'auth/login',
   profile: 'auth/profile',
   changePassword: 'auth/change-password',
+  batchListing: 'salary/batches'
 }
