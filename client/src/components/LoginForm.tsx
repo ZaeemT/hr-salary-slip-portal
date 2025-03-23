@@ -101,11 +101,11 @@ export function LoginForm({
                   <p className="text-sm text-red-500">{errors.password.message}</p>
                 )}
               </div>
-              {error && (
+              {/* {error && (
                 <div className="text-sm text-red-500">
                   {error}
                 </div>
-              )}
+              )} */}
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? (
                   <div className="flex items-center gap-2">
