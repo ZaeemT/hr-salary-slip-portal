@@ -33,7 +33,7 @@ export const Register = async (username: string, email: string, password: string
 
 export const Login = async (email: string, password: string) => {
     const response: any = await POST(apiUrl.login, {email, password});
-    await SetToken(response.data?.token);
+    await SetToken(response.data?.access_token);
     await SetAuthUser(JSON.stringify(response.data?.user));
     return response;
 }

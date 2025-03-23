@@ -9,15 +9,33 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff } from "lucide-react"
-import { useState } from "react"
+import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { useState, FormEvent } from "react"
 import { Link } from "react-router-dom"
+
+// Specify HTMLAttributes with HTMLDivElement as the generic parameter
+// and omit the onSubmit property to avoid the conflict
+interface LoginFormProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit'> {
+  onSubmit: (email: string, password: string) => Promise<any>; // Added return type parameter
+  loading?: boolean;
+  error?: string | null;
+}
 
 export function LoginForm({
   className,
+  onSubmit,
+  loading = false,
+  error,
   ...props
-}: React.ComponentPropsWithoutRef<"div">) {
+}: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    await onSubmit(email, password)
+  }
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -29,7 +47,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -38,6 +56,9 @@ export function LoginForm({
                   type="email"
                   placeholder="m@example.com"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
                 />
               </div>
               <div className="grid gap-2">
@@ -54,7 +75,10 @@ export function LoginForm({
                   <Input 
                     id="password" 
                     type={showPassword ? "text" : "password"} 
-                    required 
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
                   />
                   <button
                     type="button"
@@ -69,11 +93,14 @@ export function LoginForm({
                   </button>
                 </div>
               </div>
-              <Link to="/home" className="text-sm underline underline-offset-4">
-              <Button type="submit" className="w-full">
-                Login
+              {/* {error && (
+                <div className="text-sm text-red-500">
+                  {error}
+                </div>
+              )} */}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? (<><Loader2 /><span>Login</span></>) : "Login"}
               </Button>
-              </Link>
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}

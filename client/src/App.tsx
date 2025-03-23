@@ -4,11 +4,12 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { mainRoutes } from './routes/main.routes';
 import { authRoutes } from "./routes/auth.routes";
 import AuthLayout from "./layouts/AuthLayout";
+import { Toaster } from "@/components/ui/toaster"
 
 function App() {
   return (
     <BrowserRouter>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
         <Routes>
           {authRoutes.map((route) => (
             <Route
@@ -25,6 +26,7 @@ function App() {
             />
           ))}
         </Routes>
+        <Toaster />
       </ThemeProvider>
     </BrowserRouter>
   )
