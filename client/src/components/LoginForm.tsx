@@ -10,13 +10,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
-import { useState, FormEvent } from "react"
+import { useState } from "react"
 import { Link } from "react-router-dom"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { loginSchema, type LoginFormData } from "@/schemas/auth.schema"
 
-// Specify HTMLAttributes with HTMLDivElement as the generic parameter
-// and omit the onSubmit property to avoid the conflict
 interface LoginFormProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onSubmit'> {
-  onSubmit: (email: string, password: string) => Promise<any>; // Added return type parameter
+  onSubmit: (email: string, password: string) => Promise<any>;
   loading?: boolean;
   error?: string | null;
 }
@@ -29,12 +30,17 @@ export function LoginForm({
   ...props
 }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
-    await onSubmit(email, password)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+  })
+
+  const onSubmitHandler = async (data: LoginFormData) => {
+    await onSubmit(data.email, data.password)
   }
 
   return (
@@ -47,7 +53,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmitHandler)}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
@@ -55,11 +61,12 @@ export function LoginForm({
                   id="email"
                   type="email"
                   placeholder="m@example.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register("email")}
                   disabled={loading}
                 />
+                {errors.email && (
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
+                )}
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
@@ -74,10 +81,8 @@ export function LoginForm({
                 <div className="relative">
                   <Input 
                     id="password" 
-                    type={showPassword ? "text" : "password"} 
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    type={showPassword ? "text" : "password"}
+                    {...register("password")}
                     disabled={loading}
                   />
                   <button
@@ -92,14 +97,24 @@ export function LoginForm({
                     )}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="text-sm text-red-500">{errors.password.message}</p>
+                )}
               </div>
-              {/* {error && (
+              {error && (
                 <div className="text-sm text-red-500">
                   {error}
                 </div>
-              )} */}
+              )}
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? (<><Loader2 /><span>Login</span></>) : "Login"}
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Logging in...</span>
+                  </div>
+                ) : (
+                  "Login"
+                )}
               </Button>
             </div>
             <div className="mt-4 text-center text-sm">
