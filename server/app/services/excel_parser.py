@@ -33,9 +33,12 @@ class ExcelParserService:
     def parse_excel(self, file_path):
         """Parse the Excel file and extract salary information"""
         try:
-            # Try reading with pandas
-            df = pd.read_excel(file_path)
-            
+            # Detect file type and read accordingly
+            if file_path.endswith('.csv'):
+                df = pd.read_csv(file_path)
+            else:
+                df = pd.read_excel(file_path)
+                
             # Validate required columns
             required_columns = ['employee_id', 'name', 'email', 'department', 'position', 'basic_salary', 'allowances', 'deductions', 'net_salary']
             missing_columns = [col for col in required_columns if col not in df.columns]
