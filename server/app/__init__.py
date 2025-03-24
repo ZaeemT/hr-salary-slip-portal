@@ -13,7 +13,7 @@ def create_app(config_class=Config):
     # Initialize CORS
     CORS(app, resources={
         r"/*": {
-            "origins": ["http://localhost:5173"],  # Add your frontend URL
+            "origins": ["https://hr-salary-slip-portal.vercel.app/"],  
             # "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             # "allow_headers": ["Content-Type", "Authorization"]
         }
