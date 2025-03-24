@@ -5,6 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
+
+    RENDER_STORAGE_DIR = os.environ.get('RENDER_STORAGE_DIR', '/opt/render/project')
+
     # Get base directory
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     
@@ -15,8 +18,8 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY')
     
     # Update paths to use BASE_DIR
-    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'app', 'uploads')
-    PDF_FOLDER = os.path.join(BASE_DIR, 'app', 'generated_pdfs')
+    UPLOAD_FOLDER = os.path.join(RENDER_STORAGE_DIR, 'uploads')
+    PDF_FOLDER = os.path.join(RENDER_STORAGE_DIR, 'generated_pdfs')
     
     # File upload settings
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB max upload size
