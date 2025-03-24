@@ -11,7 +11,14 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     
     # Initialize CORS
-    CORS(app, origins=[config_class.CORS_ORIGINS], supports_credentials=True)
+    CORS(app, origins="*", supports_credentials=True)
+    # @app.after_request
+    # def add_cors_headers(response):
+    #     response.headers["Access-Control-Allow-Origin"] = "https://hr-salary-slip-portal-4vs0.onrender.com"
+    #     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    #     response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    #     response.headers["Access-Control-Allow-Credentials"] = "true"
+    #     return response
     
     # Initialize extensions
     mongo.init_app(app)
