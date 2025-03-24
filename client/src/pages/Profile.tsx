@@ -1,26 +1,95 @@
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Label } from "@/components/ui/label";
+import { GetProfile } from "@/services/auth.service";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2, Key } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ChangePassword } from "@/services/auth.service";
+import { type ChangePasswordFormData } from "@/schemas/auth.schema";
+import { ChangePasswordForm } from "@/components/Forms/ChangePasswordForm";
 
 interface User {
-    name: string;
+    username: string;
     email: string;
     role: string;
-    department: string;
-    joinDate: string;
-    avatarUrl?: string;
+    created_at: string;
 }
 
-export function Profile () {
-    // Mock user data - replace this with actual user data from your auth system
-    const user: User = {
-        name: "John Doe",
-        email: "john.doe@company.com",
-        role: "Software Engineer",
-        department: "Engineering",
-        joinDate: "2022-01-01",
-        avatarUrl: "https://github.com/shadcn.png",
+export function Profile() {
+    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+    const { toast } = useToast();
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response: any = await GetProfile();
+                if (response.status === 'success') {
+                    setUser(response.user);
+                } else {
+                    toast({
+                        title: "Error",
+                        description: response.message || "Failed to fetch profile",
+                        variant: "destructive",
+                    });
+                }
+            } catch (error: any) {
+                toast({
+                    title: "Error",
+                    description: error.response?.data?.message || "Failed to fetch profile",
+                    variant: "destructive",
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProfile();
+    }, [toast]);
+
+    const handleChangePassword = async (data: ChangePasswordFormData) => {
+        setIsChangingPassword(true);
+        try {
+            const response: any = await ChangePassword(data.currentPassword, data.newPassword);
+            if (response.status === 'success') {
+                toast({
+                    title: "Success",
+                    description: "Password changed successfully",
+                });
+                setIsOpen(false);
+            } else {
+                toast({
+                    title: "Error",
+                    description: response.message || "Failed to change password",
+                    variant: "destructive",
+                });
+            }
+        } catch (error: any) {
+            toast({
+                title: "Error",
+                description: error.response?.data?.message || "Failed to change password",
+                variant: "destructive",
+            });
+        } finally {
+            setIsChangingPassword(false);
+        }
     };
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-[50vh]">
+                <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+        );
+    }
+
+    if (!user) return null;
 
     return (
         <div className="container mx-auto py-8">
@@ -29,13 +98,11 @@ export function Profile () {
                     <div className="flex items-center space-x-4">
                         <Avatar className="h-20 w-20">
                             <AvatarFallback className="bg-muted">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-12 h-12">
-                                    <path fillRule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clipRule="evenodd" />
-                                </svg>
+                                {user.username.charAt(0).toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
                         <div>
-                            <CardTitle className="text-2xl font-bold">{user.name}</CardTitle>
+                            <CardTitle className="text-2xl font-bold">{user.username}</CardTitle>
                             <p className="text-muted-foreground">{user.role}</p>
                         </div>
                     </div>
@@ -48,19 +115,34 @@ export function Profile () {
                                 <p className="text-sm text-muted-foreground">{user.email}</p>
                             </div>
                             <div>
-                                <Label className="text-sm font-medium">Department</Label>
-                                <p className="text-sm text-muted-foreground">{user.department}</p>
-                            </div>
-                            <div>
                                 <Label className="text-sm font-medium">Join Date</Label>
                                 <p className="text-sm text-muted-foreground">
-                                    {new Date(user.joinDate).toLocaleDateString()}
+                                    {new Date(user.created_at).toLocaleDateString()}
                                 </p>
                             </div>
+                        </div>
+                        <div className="pt-4">
+                            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                                <DialogTrigger asChild>
+                                    <Button variant="default" className="gap-2">
+                                        <Key className="h-4 w-4" />
+                                        Change Password
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Change Password</DialogTitle>
+                                    </DialogHeader>
+                                    <ChangePasswordForm
+                                        onSubmit={handleChangePassword}
+                                        isChangingPassword={isChangingPassword}
+                                    />
+                                </DialogContent>
+                            </Dialog>
                         </div>
                     </div>
                 </CardContent>
             </Card>
         </div>
     );
-};
+}
