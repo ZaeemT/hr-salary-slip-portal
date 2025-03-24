@@ -1,13 +1,43 @@
 import { Listing } from "@/components/Home/Listing";
 import { Tiles } from "@/components/Home/Tiles";
 import { GetBatchListing, DeleteBatch, SendSlips } from "@/services/salary.service";
+import { GetDashboard } from "@/services/auth.service";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const Home = () => {
   const [batches, setBatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dashboardData, setDashboardData] = useState<any>(null);
+  const [dashboardLoading, setDashboardLoading] = useState(true);
   const { toast } = useToast();
+
+  const fetchDashboardData = async () => {
+    try {
+      const response: any = await GetDashboard();
+      if (response.status === 'success') {
+        setDashboardData(response?.data);
+      } else {
+        toast({
+          title: "Error",
+          description: response.message || "Failed to fetch dashboard data",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.response?.data?.message || "Failed to fetch dashboard data",
+        variant: "destructive",
+      });
+    } finally {
+      setDashboardLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [toast]);
 
   useEffect(() => {
     const fetchBatches = async () => {
@@ -89,6 +119,9 @@ const Home = () => {
           )
         );
         
+        // Refresh dashboard data after successful sending
+        await fetchDashboardData();
+        
         toast({
           title: "Success",
           description: "Salary slips have been sent to employees.",
@@ -112,7 +145,10 @@ const Home = () => {
 
   return (
     <>
-      <Tiles />
+      <Tiles 
+        data={dashboardData} 
+        loading={dashboardLoading} 
+      />
       <Listing 
         batches={batches} 
         loading={loading} 

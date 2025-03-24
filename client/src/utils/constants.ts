@@ -11,6 +11,7 @@ export const apiUrl = {
   register: 'auth/register',
   login: 'auth/login',
   profile: 'auth/profile',
+  dashboard: 'auth/dashboard',
   changePassword: 'auth/change-password',
   batchListing: 'salary/batches',
   removeBatch: 'salary/salary-data',

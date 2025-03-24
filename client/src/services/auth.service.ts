@@ -38,6 +38,11 @@ export const Login = async (email: string, password: string) => {
     return response;
 }
 
+export const GetDashboard = async () => {
+    const response = await GET(apiUrl.dashboard);
+    return response;
+}
+
 export const GetProfile = async () => {
     const response = await GET(apiUrl.profile);
     return response;
