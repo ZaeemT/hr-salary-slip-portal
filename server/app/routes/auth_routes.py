@@ -8,6 +8,8 @@ from flask_jwt_extended import (
 )
 from datetime import timedelta
 from werkzeug.security import check_password_hash
+from app.extensions import mongo
+from datetime import datetime
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -261,4 +263,75 @@ def change_password():
         return jsonify({
             'status': 'error',
             'message': f'Error changing password: {str(e)}'
+        }), 500
+
+@auth_bp.route('/dashboard', methods=['GET'])
+@jwt_required()
+def get_dashboard_stats():
+    """Get dashboard statistics for the current user"""
+    try:
+        current_user_id = get_jwt_identity()
+        user = UserModel.find_by_id(current_user_id)
+        
+        if not user:
+            return jsonify({
+                'status': 'error',
+                'message': 'User not found'
+            }), 404
+            
+
+        # Get total uploads count
+        batches_pipeline = [
+            {'$match': {'uploaded_by': get_jwt_identity()}},
+            {'$group': {
+                '_id': '$batch_id',
+                'file_name': {'$first': '$file_name'},
+                'upload_time': {'$first': '$upload_time'},
+                'record_count': {'$sum': 1},
+                'month': {'$first': '$month'},
+                'year': {'$first': '$year'},
+                'status': {'$first': '$status'}
+            }},
+            {'$sort': {'upload_time': -1}}
+        ]
+        
+        batches = list(mongo.db.salary_records.aggregate(batches_pipeline))
+        total_uploads = len(batches)  # Get the length of batches list
+        
+        # Get latest upload date
+        latest_upload_pipeline = [
+            {'$match': {'uploaded_by': current_user_id}},
+            {'$sort': {'upload_time': -1}},
+            {'$limit': 1}
+        ]
+
+        latest_upload = list(mongo.db.salary_records.aggregate(latest_upload_pipeline))
+        latest_date = latest_upload[0]['upload_time'] if latest_upload else None
+        
+        # Get total emails sent
+        sent_emails = mongo.db.salary_records.count_documents({'uploaded_by': current_user_id, 'status': 'completed'})
+        
+        # Get pending approvals
+        pending_approvals = mongo.db.salary_records.count_documents({
+            'uploaded_by': current_user_id,
+            'status': 'pending'
+        })
+        
+        
+        stats = {
+            'total_uploads': total_uploads,
+            'latest_upload_date': latest_date.isoformat() if latest_date else None,
+            'total_emails_sent': sent_emails,
+            'pending_approvals': pending_approvals,
+        }
+        
+        return jsonify({
+            'status': 'success',
+            'data': stats
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'status': 'error',
+            'message': f'Error fetching dashboard stats: {str(e)}'
         }), 500
