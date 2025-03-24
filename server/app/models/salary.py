@@ -57,7 +57,7 @@ class SalaryModel:
         try:
             update_data = {
                 'status': status,
-                'updated_at': datetime.now()
+                'updated_at': datetime.now().isoformat()
             }
             
             if message:
@@ -79,7 +79,7 @@ class SalaryModel:
         try:
             update_data = {
                 'status': status,
-                'updated_at': datetime.now()
+                'updated_at': datetime.now().isoformat()
             }
             
             if message:

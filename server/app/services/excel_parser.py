@@ -38,7 +38,7 @@ class ExcelParserService:
                 df = pd.read_csv(file_path)
             else:
                 df = pd.read_excel(file_path)
-                
+
             # Validate required columns
             required_columns = ['employee_id', 'name', 'email', 'department', 'position', 'basic_salary', 'allowances', 'deductions', 'net_salary']
             missing_columns = [col for col in required_columns if col not in df.columns]
@@ -88,7 +88,7 @@ class ExcelParserService:
         try:
             # Add metadata to each record
             batch_id = str(uuid.uuid4())
-            upload_time = datetime.now()
+            upload_time = datetime.now().isoformat()
             
             for record in salary_records:
                 record['batch_id'] = batch_id

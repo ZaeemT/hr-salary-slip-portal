@@ -12,7 +12,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 interface BatchData {
   batch_id: string;
   file_name: string;
-  upload_time: { $date: string };
+  upload_time: string ;
   record_count: number;
   month: string;
   year: string;
@@ -153,7 +153,7 @@ export function Listing({ batches, loading, onDeleteBatch, onSendSlips }: Listin
                                         {batch.file_name}
                                     </TableCell>
                                     <TableCell>
-                                        {new Date(batch.upload_time.$date).toLocaleDateString()}
+                                        {new Date(batch.upload_time).toLocaleDateString()}
                                     </TableCell>
                                     <TableCell>{`${batch.month} ${batch.year}`}</TableCell>
                                     <TableCell className="hidden md:table-cell">

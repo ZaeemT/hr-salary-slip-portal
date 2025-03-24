@@ -87,7 +87,7 @@ class PdfEmailProcessor:
         try:
             update_data = {
                 'status': status,
-                'processed_at': datetime.now()
+                'processed_at': datetime.now().isoformat()
             }
             
             if message:
@@ -105,7 +105,7 @@ class PdfEmailProcessor:
         try:
             update_data = {
                 'status': status,
-                'processed_at': datetime.now()
+                'processed_at': datetime.now().isoformat()
             }
             
             if details:

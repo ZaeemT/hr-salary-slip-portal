@@ -69,8 +69,8 @@ class UserModel:
             "email": email,
             "password_hash": generate_password_hash(password),
             "role": role,
-            "created_at": datetime.utcnow(),
-            "updated_at": datetime.utcnow(),
+            "created_at": datetime.now().isoformat(),
+            "updated_at": datetime.now().isoformat(),
             "active": True
         }
         
@@ -115,7 +115,7 @@ class UserModel:
             del update_data['password_hash']
             
         # Add updated timestamp
-        update_data['updated_at'] = datetime.utcnow()
+        update_data['updated_at'] = datetime.now().isoformat()
         
         result = mongo.db.users.update_one(
             {'_id': ObjectId(user_id)},
@@ -138,7 +138,7 @@ class UserModel:
         """
         update_data = {
             'password_hash': generate_password_hash(new_password),
-            'updated_at': datetime.now()
+            'updated_at': datetime.now().isoformat()
         }
         
         result = mongo.db.users.update_one(
