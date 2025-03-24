@@ -29,7 +29,7 @@ class Config:
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
     
     # CORS settings
-    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'http://localhost:5173', 'https://hr-salary-slip-portal.vercel.app/').split(',')
+    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'http://localhost:5173').split(',')
     
     # Ensure required directories exist
     @staticmethod
