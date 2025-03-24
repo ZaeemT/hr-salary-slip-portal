@@ -1,9 +1,8 @@
-"use client"
-
 import { Info } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { GOOGLE_SHEET_LINK } from "@/utils/constants"
 
 export function UploadGuidelines() {
   return (
@@ -21,7 +20,7 @@ export function UploadGuidelines() {
             <li>Use Excel files (.xlsx, .xls) or CSV files (.csv)</li>
             <li>Maximum file size: 10MB</li>
             <li>First row should contain column headers</li>
-            <li>Required columns: Employee ID, Name, Department, Position, Basic Salary, Allowances, Deductions</li>
+            <li>Required columns: employee_id, name, department, position, basic_salary, allowances, deductions, net_salary</li>
             <li>Ensure all employee IDs are unique</li>
             <li>Numeric values should not contain currency symbols</li>
           </ul>
@@ -31,7 +30,6 @@ export function UploadGuidelines() {
           <h3 className="font-semibold mb-2">Processing Information</h3>
           <ul className="list-disc pl-5 space-y-1 text-sm">
             <li>Salary slips will be generated for all employees in the uploaded file</li>
-            <li>The system will calculate net salary based on basic salary, allowances, and deductions</li>
             <li>Processing time depends on the number of employees</li>
             <li>You will be able to preview the data before final confirmation</li>
           </ul>
@@ -42,7 +40,13 @@ export function UploadGuidelines() {
           <AlertTitle>Need help?</AlertTitle>
           <AlertDescription>
             Download our{" "}
-            <Button variant="link" className="h-auto p-0">
+            <Button 
+              variant="link" 
+              className="h-auto p-0"
+              onClick={() => {
+                window.open(GOOGLE_SHEET_LINK, '_blank');
+              }}
+            >
               sample template
             </Button>{" "}
             to ensure your data is formatted correctly.

@@ -6,6 +6,8 @@ export const constants = {
   LOCAL_STORAGE_USER: 'user',
 };
 
+export const GOOGLE_SHEET_LINK='https://docs.google.com/spreadsheets/d/1iapUjPkoSrHXFAhv1hoCwAEYpUkP21eIqZUXcPWRXSc/export?format=xlsx'
+
 export const apiUrl = {
   // chatbot: 'qa/'
   register: 'auth/register',
