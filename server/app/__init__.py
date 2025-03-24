@@ -11,13 +11,7 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     
     # Initialize CORS
-    CORS(app, resources={
-        r"/*": {
-            "origins": [config_class.CORS_ORIGINS],  
-            # "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            # "allow_headers": ["Content-Type", "Authorization"]
-        }
-    })
+    CORS(app, origins=[config_class.CORS_ORIGINS])
     
     # Initialize extensions
     mongo.init_app(app)
