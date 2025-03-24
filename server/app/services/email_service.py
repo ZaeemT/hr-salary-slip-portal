@@ -23,6 +23,7 @@ class EmailService:
             recipient_name = record['name']
             month = record['month']
             year = record['year']
+            company_name = "HR Salary Slip Portal"
             
             # Create message container
             msg = MIMEMultipart()
@@ -33,34 +34,47 @@ class EmailService:
             
             # Create email body
             email_body = f"""
-            <html>
+                <html lang="en" style="font-size: 16px;">
                 <head>
-                    <style>
-                        body {{ font-family: Arial, sans-serif; line-height: 1.6; }}
-                        .container {{ width: 80%; margin: 0 auto; padding: 20px; }}
-                        .header {{ background-color: #f8f8f8; padding: 10px; border-bottom: 2px solid #ddd; }}
-                        .content {{ padding: 20px 0; }}
-                        .footer {{ font-size: 12px; color: #777; padding-top: 20px; border-top: 1px solid #ddd; }}
-                    </style>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Salary Slip</title>
                 </head>
-                <body>
-                    <div class="container">
-                        <div class="header">
-                            <h2>Salary Slip - {month.capitalize()} {year}</h2>
+                <body style="font-family: 'Arial', sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 0;">
+                    <div style="width: 100%; max-width: 600px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+                        <div style="background-color: #2c3e50; color: #ffffff; padding: 20px; text-align: center; display: flex; align-items: center; justify-content: center;">
+                            <h1 style="margin: 0; font-size: 24px;">{company_name}</h1>
                         </div>
-                        <div class="content">
-                            <p>Dear {recipient_name},</p>
-                            <p>Please find attached your salary slip for the month of {month.capitalize()} {year}.</p>
-                            <p>This is an automated email. Please do not reply to this message.</p>
-                            <p>If you have any queries regarding your salary slip, please contact the HR department.</p>
-                            <p>Thank you.</p>
+                        
+                        <div style="padding: 30px; background-color: #ffffff;">
+                            <h2 style="margin: 0; font-size: 20px;">Salary Slip - {month.capitalize()} {year}</h2>
+                            <p style="margin-bottom: 15px;">Dear {recipient_name},</p>
+                            
+                            <p style="margin-bottom: 15px;">We are pleased to provide you with your salary slip for the month of {month.capitalize()} {year}. Please find the detailed breakdown attached to this email.</p>
+                            
+                            <p style="margin-bottom: 15px;">Key points to note:</p>
+                            <ul style="margin-bottom: 15px;">
+                                <li>Salary slip is generated for the period: {month.capitalize()} {year}</li>
+                                <li>Please review all details carefully</li>
+                                <li>Contact HR for any discrepancies</li>
+                            </ul>
+                            
+                            <p style="margin-bottom: 15px;">If you have any questions or concerns regarding your salary slip, please reach out to the HR department.</p>
+                            
+                            <p style="margin-bottom: 15px;">Thank you for your continued dedication and hard work.</p>
+                            
+                            <p style="margin-bottom: 15px;">Best regards,<br>HR Department<br>{company_name}</p>
+                            
+                            <p style="color: #e74c3c; font-weight: bold; margin-top: 20px;">CONFIDENTIAL: This is a system-generated email. Please do not reply.</p>
                         </div>
-                        <div class="footer">
-                            <p>This email and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed.</p>
+                        
+                        <div style="background-color: #f8f8f8; color: #777; font-size: 12px; padding: 20px; text-align: center; border-top: 1px solid #e0e0e0;">
+                            <p style="margin-bottom: 10px;">&copy; {year} {company_name}. All rights reserved.</p>
+                            <p>This email and its attachments are confidential and intended solely for the use of the individual or entity to whom they are addressed.</p>
                         </div>
                     </div>
                 </body>
-            </html>
+                </html>
             """
             
             # Attach email body as HTML
