@@ -35,46 +35,44 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, [toast]);
 
-  useEffect(() => {
-    const fetchBatches = async () => {
-      try {
-        const response: any = await GetBatchListing();
-        
-        if (response.status === 'success') {
-          setBatches(response.data || []);
-        } else {
-          toast({
-            title: "Error",
-            description: response.message || "Failed to fetch batches",
-            variant: "destructive",
-          });
-        }
-      } catch (err: any) {
+  const fetchBatches = async () => {
+    try {
+      const response: any = await GetBatchListing();
+
+      if (response.status === 'success') {
+        setBatches(response.data || []);
+      } else {
         toast({
           title: "Error",
-          description: err.response?.data?.message || "Failed to fetch batches",
+          description: response.message || "Failed to fetch batches",
           variant: "destructive",
         });
-      } finally {
-        setLoading(false);
       }
-    };
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.response?.data?.message || "Failed to fetch batches",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    fetchDashboardData();
     fetchBatches();
   }, [toast]);
 
   const handleDeleteBatch = async (batchId: string) => {
     try {
       const response: any = await DeleteBatch(batchId);
-      
+
       if (response.status === 'success') {
         // Update local state to remove the deleted batch
         setBatches(prevBatches => prevBatches.filter(batch => batch.batch_id !== batchId));
-        
+
         toast({
           title: "Success",
           description: "Batch deleted successfully",
@@ -98,30 +96,30 @@ const Home = () => {
 
   const handleSendSlips = async (batchId: string) => {
     try {
-      
+
       // Update the batch status in local state
-      setBatches(prevBatches => 
-        prevBatches.map(batch => 
-          batch.batch_id === batchId 
-          ? { ...batch, status: 'processing' } 
-          : batch
+      setBatches(prevBatches =>
+        prevBatches.map(batch =>
+          batch.batch_id === batchId
+            ? { ...batch, status: 'processing' }
+            : batch
         )
       );
-      
-      const response:any = await SendSlips(batchId);
-      
+
+      const response: any = await SendSlips(batchId);
+
       if (response.status === 'success') {
-        setBatches(prevBatches => 
-          prevBatches.map(batch => 
-            batch.batch_id === batchId 
-            ? { ...batch, status: 'completed' } 
-            : batch
+        setBatches(prevBatches =>
+          prevBatches.map(batch =>
+            batch.batch_id === batchId
+              ? { ...batch, status: 'completed' }
+              : batch
           )
         );
-        
+
         // Refresh dashboard data after successful sending
         await fetchDashboardData();
-        
+
         toast({
           title: "Success",
           description: "Salary slips have been sent to employees.",
@@ -145,16 +143,16 @@ const Home = () => {
 
   return (
     <>
-      <Tiles 
-        data={dashboardData} 
-        loading={dashboardLoading} 
+      <Tiles
+        data={dashboardData}
+        loading={dashboardLoading}
       />
-      <Listing 
-        batches={batches} 
-        loading={loading} 
+      <Listing
+        batches={batches}
+        loading={loading}
         onDeleteBatch={handleDeleteBatch}
         onSendSlips={handleSendSlips}
-      />      
+      />
     </>
   );
 };
