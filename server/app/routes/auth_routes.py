@@ -278,11 +278,10 @@ def get_dashboard_stats():
                 'status': 'error',
                 'message': 'User not found'
             }), 404
-            
 
         # Get total uploads count
         batches_pipeline = [
-            {'$match': {'uploaded_by': get_jwt_identity()}},
+            {'$match': {'uploaded_by': current_user_id}},
             {'$group': {
                 '_id': '$batch_id',
                 'file_name': {'$first': '$file_name'},
@@ -296,7 +295,7 @@ def get_dashboard_stats():
         ]
         
         batches = list(mongo.db.salary_records.aggregate(batches_pipeline))
-        total_uploads = len(batches)  # Get the length of batches list
+        total_uploads = len(batches)
         
         # Get latest upload date
         latest_upload_pipeline = [
@@ -306,17 +305,29 @@ def get_dashboard_stats():
         ]
 
         latest_upload = list(mongo.db.salary_records.aggregate(latest_upload_pipeline))
-        latest_date = latest_upload[0]['upload_time'] if latest_upload else None
         
-        # Get total emails sent
-        sent_emails = mongo.db.salary_records.count_documents({'uploaded_by': current_user_id, 'status': 'completed'})
+        # Safely handle the latest upload date
+        latest_date = None
+        if latest_upload:
+            upload_time = latest_upload[0].get('upload_time')
+            if isinstance(upload_time, datetime):
+                latest_date = upload_time
+            elif upload_time:
+                try:
+                    latest_date = datetime.fromisoformat(upload_time.replace('Z', '+00:00'))
+                except (ValueError, AttributeError):
+                    latest_date = None
         
-        # Get pending approvals
+        # Get total emails sent and pending approvals
+        sent_emails = mongo.db.salary_records.count_documents({
+            'uploaded_by': current_user_id, 
+            'status': 'completed'
+        })
+        
         pending_approvals = mongo.db.salary_records.count_documents({
             'uploaded_by': current_user_id,
             'status': 'pending'
         })
-        
         
         stats = {
             'total_uploads': total_uploads,
