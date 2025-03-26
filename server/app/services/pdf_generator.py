@@ -46,6 +46,9 @@ class PDFGeneratorService:
     def generate_salary_slip(self, salary_data):
         """Generate a PDF salary slip for an employee"""
         try:
+            # Ensure the PDF folder exists
+            os.makedirs(self.pdf_folder, exist_ok=True)
+            
             # Create a unique filename
             filename = f"salary_slip_{salary_data['employee_id']}_{salary_data['month']}_{salary_data['year']}.pdf"
             file_path = os.path.join(self.pdf_folder, filename)
