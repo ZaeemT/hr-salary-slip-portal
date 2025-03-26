@@ -51,7 +51,7 @@ ENV/
 .vscode/
 *.log
 uploads/
-generated_pdfs/
+# generated_pdfs/
 processed_data/
 
 

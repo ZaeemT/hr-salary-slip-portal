@@ -5,25 +5,20 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-
-    RENDER_STORAGE_DIR = os.environ.get('RENDER_STORAGE_DIR', '/opt/render/project')
-
-    # Get base directory
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    
     # MongoDB settings
     MONGO_URI = os.environ.get('MONGO_URI')
 
     # Secret key for JWT and other security
     SECRET_KEY = os.environ.get('SECRET_KEY')
     
-    # Update paths to use BASE_DIR
-    UPLOAD_FOLDER = os.path.join(RENDER_STORAGE_DIR, 'uploads')
-    PDF_FOLDER = os.path.join(RENDER_STORAGE_DIR, 'generated_pdfs')
     
     # File upload settings
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB max upload size
     ALLOWED_EXTENSIONS = {'xlsx', 'xls', 'csv'}
+    
+    # PDF Generation settings
+    PDF_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'generated_pdfs')
     
     # Email settings
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
@@ -39,14 +34,5 @@ class Config:
     # Ensure required directories exist
     @staticmethod
     def init_app(app):
-        """Ensure required directories exist with proper permissions"""
-        try:
-            # Create directories with full permissions
-            os.makedirs(Config.UPLOAD_FOLDER, mode=0o777, exist_ok=True)
-            os.makedirs(Config.PDF_FOLDER, mode=0o777, exist_ok=True)
-            
-            # Log directory creation
-            app.logger.info(f"Upload folder created at: {Config.UPLOAD_FOLDER}")
-            app.logger.info(f"PDF folder created at: {Config.PDF_FOLDER}")
-        except Exception as e:
-            app.logger.error(f"Error creating directories: {str(e)}")
+        os.makedirs(Config.UPLOAD_FOLDER, mode=0o777, exist_ok=True)
+        os.makedirs(Config.PDF_FOLDER, mode=0o777, exist_ok=True)
