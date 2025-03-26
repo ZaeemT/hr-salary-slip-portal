@@ -13,12 +13,12 @@ class Config:
     
     
     # File upload settings
-    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads')
+    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp/uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB max upload size
     ALLOWED_EXTENSIONS = {'xlsx', 'xls', 'csv'}
     
     # PDF Generation settings
-    PDF_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'generated_pdfs')
+    PDF_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tmp/generated_pdfs')
     
     # Email settings
     MAIL_SERVER = os.environ.get('MAIL_SERVER')

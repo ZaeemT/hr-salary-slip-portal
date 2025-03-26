@@ -22,6 +22,7 @@ dist
 # End of https://www.toptal.com/developers/gitignore/api/react
 
 
+### python ###
 
 __pycache__/
 *.py[cod]
@@ -51,8 +52,11 @@ ENV/
 .vscode/
 *.log
 uploads/
-# generated_pdfs/
+generated_pdfs/
 processed_data/
+tmp/
 
+
+### custom ###
 
 project_context.txt
