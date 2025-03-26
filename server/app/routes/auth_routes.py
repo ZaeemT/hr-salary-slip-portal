@@ -203,7 +203,7 @@ def get_profile():
                 'username': user['username'],
                 'email': user['email'],
                 'role': user.get('role', 'user'),
-                'created_at': user.get('created_at').isoformat() if user.get('created_at') else None
+                'created_at': user.get('created_at') if user.get('created_at') else None
             }
         })
         
@@ -305,19 +305,8 @@ def get_dashboard_stats():
         ]
 
         latest_upload = list(mongo.db.salary_records.aggregate(latest_upload_pipeline))
-        
-        # Safely handle the latest upload date
-        latest_date = None
-        if latest_upload:
-            upload_time = latest_upload[0].get('upload_time')
-            if isinstance(upload_time, datetime):
-                latest_date = upload_time
-            elif upload_time:
-                try:
-                    latest_date = datetime.fromisoformat(upload_time.replace('Z', '+00:00'))
-                except (ValueError, AttributeError):
-                    latest_date = None
-        
+        latest_date = latest_upload[0]['upload_time'] if latest_upload else None
+
         # Get total emails sent and pending approvals
         sent_emails = mongo.db.salary_records.count_documents({
             'uploaded_by': current_user_id, 
@@ -331,7 +320,7 @@ def get_dashboard_stats():
         
         stats = {
             'total_uploads': total_uploads,
-            'latest_upload_date': latest_date.isoformat() if latest_date else None,
+            'latest_upload_date': latest_date if latest_date else None,
             'total_emails_sent': sent_emails,
             'pending_approvals': pending_approvals,
         }
